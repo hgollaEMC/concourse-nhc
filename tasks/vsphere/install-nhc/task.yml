@@ -18,9 +18,8 @@ params:
 
 
 inputs:
-  #- name: concourse-vsphere
-  - name: nhc
+  - name: concourse-nhc
   - name: govc
   
 run:
-  path: ./nhc/tasks/vsphere/install-nhc/task.sh
+  path: concourse-nhc/tasks/vsphere/install-nhc/task.sh
