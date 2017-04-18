@@ -32,7 +32,7 @@ resources:
 jobs:
 - name: validate-nhc-inputs
   plan:
-  -get: concourse-nhc
+  - get: concourse-nhc
   - get: govc
     params:
       globs:
