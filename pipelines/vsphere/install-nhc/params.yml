@@ -1,0 +1,37 @@
+pivnet_token: <YOUR-PIVNET-TOKEN>
+github_token: <YOUR-GITHUB-TOKEN>
+
+# Enter vCenter details
+vcenter_host: <VCENTER-HOST-OR-IP>
+vcenter_usr: <VCENTER-SERVICE-USR> # If user is tied to a domain, then escape the \, example `domain\\user`
+vcenter_pwd: <VCENTER-SERVICE-USR-PWD>
+vcenter_data_center: <VCENTER-DATA-CENTER-TO-DEPLOY>
+
+vm_disk_type: thin # BOSH provisioned VM Disk type, enter thick or thin
+ephemeral_storage_names: <PCF-EPHEMERAL-STORAGE-NAMES> # Ephemeral Storage names from vCenter for use by PCF
+persistent_storage_names: <PCF-PERSISTENT-STORAGE-NAMES> # Persistent Storage names from vCenter for use by PCF
+
+ntp_servers: # Comma Seperated NTP Servers for use for VM's deployed by BOSH
+
+## Network configuration for Ops Director
+icmp_checks_enabled: true # Configure if ICMP checks are allowed, possible values true or false
+infra_network_name: "INFRASTRUCTURE"
+infra_vsphere_network: # vCenter Infrastructure network name
+infra_nw_cidr: # Infrastructure network CIDR, ex: 10.0.0.0/22
+infra_excluded_range: # Infrastructure network exclusion range
+infra_nw_dns: # Infrastructure network DNS
+infra_nw_gateway: # Infrastructure network Gateway
+infra_nw_azs: # Comma seperated list of AZ's to be associated with this network
+
+
+## AZ configuration for Ops Director
+az_1_name: <az1-name> # AZ1 logical name. No spaces or special characters
+az_1_cluster_name: <vcenter-az1-cluster-name> # vCenter Cluster name for AZ1
+az_1_rp_name: <vcenter-az1-resource-pool-name> # vCenter Resource Pool name for AZ1
+
+nhc-release: <nhc-release-no> #nhc release number
+s3-bucket: 
+s3-access-key-id: 
+s3-secret-access-key: 
+ecs-endpoint: 
+s3_region: US
