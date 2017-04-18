@@ -32,13 +32,16 @@ resources:
 jobs:
 - name: validate-nhc-inputs
   plan:
-  - get: concourse-nhc
-  - get: govc
-    params:
-      globs:
-      - "*linux_amd64*"
-  - get: om-cli
-    globs: om-linux
+  - aggregate:
+    - get: concourse-nhc
+    - get: govc
+      params:
+        globs:
+        - "*linux_amd64*"
+    - get: om-cli
+      globs: om-linux
+      trigger: true
+      
   - task: validate-vsphere
     file: concourse-nhc/tasks/vsphere/install-nhc/task.yml
     params:
