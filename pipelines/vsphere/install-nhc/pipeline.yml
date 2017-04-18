@@ -1,60 +1,65 @@
+---
+
+resource_types:
+- name: pivnet
+  type: docker-image
+  source:
+    repository: pivotalcf/pivnet-resource
+    tag: latest-final
+
 resources:
-- name: minio-s3
-  type: s3
+- name: om-cli
+  type: github-release
   source:
-    regexp: example-file-(.*).txt
-    endpoint: {{ecs-endpoint}}
-    bucket: {{s3-bucket}}
-    access_key_id: {{s3-access-key-id}}
-    secret_access_key: {{s3-secret-access-key}}
-    disable_ssl: true
-- name: nhc
-  type: s3
+    user: pivotal-cf
+    repository: om
+    access_token: {{github_token}}
+
+- name: govc
+  type: github-release
   source:
-    regexp: om-linux-(.*)
-    endpoint: {{ecs-endpoint}}
-    bucket: {{s3-bucket}}
-    access_key_id: {{s3-access-key-id}}
-    secret_access_key: {{s3-secret-access-key}}
-    disable_ssl: true
+    user: vmware
+    repository: govmomi
+    access_token: {{github_token}}
+
+- name: concourse-nhc
+  type: git
+  source:
+    uri: https://github.com/hgollaEMC/concourse-nhc
+    branch: master
 
 
 jobs:
-- name: minio-s3-write-it-out
+- name: validate-nhc-inputs
   plan:
-  - task: cat-example-file
-    config:
-      platform: linux
-      image_resource:
-        type: docker-image
-        source:
-          repository: ubuntu
-      run:
-        path: bash
-        args:
-        - -c
-        - echo "This is an example file, created $(date)" > file-to-upload/example-file-1.txt
-      outputs:
-        - name: file-to-upload
-  - put: minio-s3
+  -get: concourse-nhc
+  - get: govc
     params:
-      file: file-to-upload/example-file-*
-
-- name: minio-s3-read-it-out
-  plan:
-  - get: minio-s3
-  - get: nhc
-  - task: cat-example-file
-    config:
-      platform: linux
-      image_resource:
-        type: docker-image
-        source:
-          repository: ubuntu
-      inputs:
-      - name: minio-s3
-      run:
-        path: bash
-        args:
-        - -c
-        - cat minio-s3/example-file-*
+      globs:
+      - "*linux_amd64*"
+  - get: om-cli
+    globs: om-linux
+  - task: validate-vsphere
+    file: concourse-nhc/tasks/vsphere/install-nhc/task.yml
+    params:
+      VCENTER_HOST: {{vcenter_host}}
+      VCENTER_USR: {{vcenter_usr}}
+      VCENTER_PWD: {{vcenter_pwd}}
+      VCENTER_DATA_CENTER: {{vcenter_data_center}}
+      VCENTER_DISK_TYPE: {{vm_disk_type}}
+      INFRA_VCENTER_NETWORK: {{infra_vsphere_network}}
+      INFRA_NW_CIDR: {{infra_nw_cidr}}
+      INFRA_NW_DNS: {{infra_nw_dns}}
+      INFRA_NW_GATEWAY: {{infra_nw_gateway}}
+      NTP_SERVERS: {{ntp_servers}}
+      AZ_1_CUSTER_NAME: {{az_1_cluster_name}}
+      AZ_1_RP_NAME: {{az_1_rp_name}}
+      EPHEMERAL_STORAGE_NAMES: {{ephemeral_storage_names}}
+      PERSISTENT_STORAGE_NAMES: {{persistent_storage_names}}
+      GOVC_INSECURE: 1
+      GOVC_URL: {{vcenter_host}}
+      GOVC_USERNAME: {{vcenter_usr}}
+      GOVC_PASSWORD: {{vcenter_pwd}}
+      GOVC_DATACENTER: {{vcenter_data_center}}
+      GOVC_DATASTORE: {{persistent_storage_names}}
+      GOVC_NETWORK: {{infra_vsphere_network}}
