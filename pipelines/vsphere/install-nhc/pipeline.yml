@@ -1,0 +1,60 @@
+---
+
+resource_types:
+- name: pivnet
+  type: docker-image
+  source:
+    repository: pivotalcf/pivnet-resource
+    tag: latest-final
+
+resources:
+- name: om-cli
+  type: github-release
+  source:
+    user: pivotal-cf
+    repository: om
+    access_token: 6551d3b80358c9af83985337b69c4241e5da670d
+
+- name: govc
+  type: github-release
+  source:
+    user: vmware
+    repository: govmomi
+    access_token: 6551d3b80358c9af83985337b69c4241e5da670d
+
+
+jobs:
+- name: validate-nhc-inputs
+  plan:
+  - get: govc
+    params:
+      globs:
+      - "*linux_amd64*"
+  - get: om-cli
+    globs: om-linux
+  - task: validate-vsphere
+    file: ./nhc/tasks/vsphere/install-nhc/task.yml
+    params:
+      VCENTER_HOST: {{vcenter_host}}
+      VCENTER_USR: {{vcenter_usr}}
+      VCENTER_PWD: {{vcenter_pwd}}
+      VCENTER_DATA_CENTER: {{vcenter_data_center}}
+      VCENTER_DISK_TYPE: {{vm_disk_type}}
+      INFRA_VCENTER_NETWORK: {{infra_vsphere_network}}
+      INFRA_NW_CIDR: {{infra_nw_cidr}}
+      INFRA_NW_DNS: {{infra_nw_dns}}
+      INFRA_NW_GATEWAY: {{infra_nw_gateway}}
+      NTP_SERVERS: {{ntp_servers}}
+      AZ_1_CUSTER_NAME: {{az_1_cluster_name}}
+      AZ_1_RP_NAME: {{az_1_rp_name}}
+      EPHEMERAL_STORAGE_NAMES: {{ephemeral_storage_names}}
+      PERSISTENT_STORAGE_NAMES: {{persistent_storage_names}}
+      GOVC_INSECURE: 1
+      GOVC_URL: {{vcenter_host}}
+      GOVC_USERNAME: {{vcenter_usr}}
+      GOVC_PASSWORD: {{vcenter_pwd}}
+      GOVC_DATACENTER: {{vcenter_data_center}}
+      GOVC_DATASTORE: {{persistent_storage_names}}
+      GOVC_NETWORK: {{infra_vsphere_network}}
+
+
