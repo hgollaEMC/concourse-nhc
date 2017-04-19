@@ -39,4 +39,4 @@ inputs:
   - name: govc
 
 run:
-  path: concourse-vsphere/tasks/import-opsman/task.sh
+  path: concourse-nhc/tasks/import-opsman/task.sh
