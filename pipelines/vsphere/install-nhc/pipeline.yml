@@ -114,14 +114,3 @@ jobs:
       OM_RESOURCE_POOL: {{om_resource_pool}}
       OM_DISK_TYPE: {{om_disk_type}}
       OM_VM_POWER_STATE: {{om_vm_power_state}}
-
-- name: configure-ops-director
-  plan:
-  - aggregate:
-    - get: concourse-vsphere
-      passed: [install-opsmgr]
-      trigger: true
-    - get: om-cli
-      globs: om-linux
-      passed: [install-opsmgr]
-
