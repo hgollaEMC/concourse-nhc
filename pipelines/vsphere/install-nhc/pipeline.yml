@@ -75,16 +75,20 @@ jobs:
   plan:
   - aggregate:
     - get: concourse-nhc
+      passed: [validate-nhc-inputs]
+      trigger: true
     - get: govc
       params:
         globs:
         - "*linux_amd64*"
     - get: om-cli
       globs: om-linux
+      passed: [validate-nhc-inputs]
     - get: pivnet-opsman-product
       params:
         globs:
         - "*.ova"
+      passed: [validate-nhc-inputs]
       trigger: true
 
   - task: deploy-opsman
