@@ -88,7 +88,6 @@ jobs:
       params:
         globs:
         - "*.ova"
-      passed: [validate-nhc-inputs]
       trigger: true
 
   - task: deploy-opsman
