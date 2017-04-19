@@ -35,7 +35,7 @@ params:
 
 inputs:
   - name: pivnet-opsman-product
-  - name: concourse-vsphere
+  - name: concourse-nhc
   - name: govc
 
 run:
